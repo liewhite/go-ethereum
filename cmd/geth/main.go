@@ -19,6 +19,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/ethereum/go-ethereum/arbitrage"
 	"os"
 	"sort"
 	"strconv"
@@ -312,7 +313,7 @@ func prepare(ctx *cli.Context) {
 	utils.SetupMetrics(ctx)
 
 	// Start system runtime metrics collection
-	go metrics.CollectProcessMetrics(3 * time.Second)
+	go metrics.CollectProcessMetrics(15 * time.Second)
 }
 
 // geth is the main entry point into the system if no special subcommand is run.
@@ -340,6 +341,12 @@ func startNode(ctx *cli.Context, stack *node.Node, backend ethapi.Backend, isCon
 
 	// Start up the node itself
 	utils.StartNode(ctx, stack, isConsole)
+
+	// 搬砖程序
+	arb := arbitrage.NewArbitrage(ctx.Context, backend)
+	arb.Run()
+
+	// todo 甲汉堡程序
 
 	// Unlock any account specifically requested
 	unlockAccounts(ctx, stack)

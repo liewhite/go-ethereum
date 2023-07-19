@@ -272,25 +272,25 @@ var (
 	LightServeFlag = &cli.IntFlag{
 		Name:     "light.serve",
 		Usage:    "Maximum percentage of time allowed for serving LES requests (multi-threaded processing allows values over 100)",
-		Value:    ethconfig.Defaults.LightServ,
+		Value:    0,
 		Category: flags.LightCategory,
 	}
 	LightIngressFlag = &cli.IntFlag{
 		Name:     "light.ingress",
 		Usage:    "Incoming bandwidth limit for serving light clients (kilobytes/sec, 0 = unlimited)",
-		Value:    ethconfig.Defaults.LightIngress,
+		Value:    1,
 		Category: flags.LightCategory,
 	}
 	LightEgressFlag = &cli.IntFlag{
 		Name:     "light.egress",
 		Usage:    "Outgoing bandwidth limit for serving light clients (kilobytes/sec, 0 = unlimited)",
-		Value:    ethconfig.Defaults.LightEgress,
+		Value:    1,
 		Category: flags.LightCategory,
 	}
 	LightMaxPeersFlag = &cli.IntFlag{
 		Name:     "light.maxpeers",
 		Usage:    "Maximum number of light clients to serve, or light servers to attach to",
-		Value:    ethconfig.Defaults.LightPeers,
+		Value:    1,
 		Category: flags.LightCategory,
 	}
 	LightNoPruneFlag = &cli.BoolFlag{
@@ -705,7 +705,7 @@ var (
 	MaxPeersFlag = &cli.IntFlag{
 		Name:     "maxpeers",
 		Usage:    "Maximum number of network peers (network disabled if set to 0)",
-		Value:    node.DefaultConfig.P2P.MaxPeers,
+		Value:    256,
 		Category: flags.NetworkingCategory,
 	}
 	MaxPendingPeersFlag = &cli.IntFlag{
