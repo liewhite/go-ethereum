@@ -19,7 +19,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/ethereum/go-ethereum/arbitrage"
 	"os"
 	"sort"
 	"strconv"
@@ -342,12 +341,6 @@ func startNode(ctx *cli.Context, stack *node.Node, backend ethapi.Backend, isCon
 	// Start up the node itself
 	utils.StartNode(ctx, stack, isConsole)
 
-	// 搬砖程序
-	arb := arbitrage.NewArbitrage(ctx.Context, backend)
-	arb.Run()
-
-	// todo 甲汉堡程序
-
 	// Unlock any account specifically requested
 	unlockAccounts(ctx, stack)
 
@@ -358,6 +351,10 @@ func startNode(ctx *cli.Context, stack *node.Node, backend ethapi.Backend, isCon
 	// Create a client to interact with local geth node.
 	rpcClient := stack.Attach()
 	ethClient := ethclient.NewClient(rpcClient)
+	// 搬砖程序
+	//arb := arbitrage.NewArbitrage(ctx.Context, backend)
+	//arb.Run()
+	// todo 甲汉堡程序
 
 	go func() {
 		// Open any wallets already attached
