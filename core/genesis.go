@@ -63,8 +63,8 @@ type Genesis struct {
 	GasUsed       uint64      `json:"gasUsed"`
 	ParentHash    common.Hash `json:"parentHash"`
 	BaseFee       *big.Int    `json:"baseFeePerGas"` // EIP-1559
-	ExcessDataGas *uint64     `json:"excessDataGas"` // EIP-4844
-	DataGasUsed   *uint64     `json:"dataGasUsed"`   // EIP-4844
+	ExcessBlobGas *uint64     `json:"excessBlobGas"` // EIP-4844
+	BlobGasUsed   *uint64     `json:"blobGasUsed"`   // EIP-4844
 }
 
 func ReadGenesis(db ethdb.Database) (*Genesis, error) {
@@ -99,8 +99,8 @@ func ReadGenesis(db ethdb.Database) (*Genesis, error) {
 	genesis.Mixhash = genesisHeader.MixDigest
 	genesis.Coinbase = genesisHeader.Coinbase
 	genesis.BaseFee = genesisHeader.BaseFee
-	genesis.ExcessDataGas = genesisHeader.ExcessDataGas
-	genesis.DataGasUsed = genesisHeader.DataGasUsed
+	genesis.ExcessBlobGas = genesisHeader.ExcessBlobGas
+	genesis.BlobGasUsed = genesisHeader.BlobGasUsed
 
 	return &genesis, nil
 }
@@ -137,7 +137,7 @@ func (ga *GenesisAlloc) deriveHash() (common.Hash, error) {
 			statedb.SetState(addr, key, value)
 		}
 	}
-	return statedb.Commit(false)
+	return statedb.Commit(0, false)
 }
 
 // flush is very similar with deriveHash, but the main difference is
@@ -156,7 +156,7 @@ func (ga *GenesisAlloc) flush(db ethdb.Database, triedb *trie.Database, blockhas
 			statedb.SetState(addr, key, value)
 		}
 	}
-	root, err := statedb.Commit(false)
+	root, err := statedb.Commit(0, false)
 	if err != nil {
 		return err
 	}
@@ -228,8 +228,8 @@ type genesisSpecMarshaling struct {
 	Difficulty    *math.HexOrDecimal256
 	Alloc         map[common.UnprefixedAddress]GenesisAccount
 	BaseFee       *math.HexOrDecimal256
-	ExcessDataGas *math.HexOrDecimal64
-	DataGasUsed   *math.HexOrDecimal64
+	ExcessBlobGas *math.HexOrDecimal64
+	BlobGasUsed   *math.HexOrDecimal64
 }
 
 type genesisAccountMarshaling struct {
@@ -477,13 +477,13 @@ func (g *Genesis) ToBlock() *types.Block {
 			withdrawals = make([]*types.Withdrawal, 0)
 		}
 		if conf.IsCancun(num, g.Timestamp) {
-			head.ExcessDataGas = g.ExcessDataGas
-			head.DataGasUsed = g.DataGasUsed
-			if head.ExcessDataGas == nil {
-				head.ExcessDataGas = new(uint64)
+			head.ExcessBlobGas = g.ExcessBlobGas
+			head.BlobGasUsed = g.BlobGasUsed
+			if head.ExcessBlobGas == nil {
+				head.ExcessBlobGas = new(uint64)
 			}
-			if head.DataGasUsed == nil {
-				head.DataGasUsed = new(uint64)
+			if head.BlobGasUsed == nil {
+				head.BlobGasUsed = new(uint64)
 			}
 		}
 	}
