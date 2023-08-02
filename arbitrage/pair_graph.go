@@ -3,7 +3,8 @@ package arbitrage
 import (
 	"context"
 	"fmt"
-	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/arbitrage/contracts/univ2"
+	"github.com/ethereum/go-ethereum/arbitrage/contracts/univ3"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/internal/ethapi"
@@ -84,6 +85,8 @@ func (p *PairGraphNode) SearchCycles(path []*PairGraphNode, tokenIn, endToken co
 type PairGraph struct {
 	ctx        context.Context
 	cli        *ethclient.Client
+	v2Contract *univ2.Univ2Caller
+	v3Contract *univ3.Univ3Caller
 	backend    ethapi.Backend
 	pairByAddr map[common.Address]*PairGraphNode // 按合约地址组织图
 }
@@ -125,11 +128,10 @@ func (p *PairGraph) SearchCycles(protocol SwapProtocol, addr common.Address, tok
 func (p *PairGraph) CreatePair(protocol SwapProtocol, addr common.Address) error {
 	factory := protocol.Factory()
 	// 读取pair信息， 包括factory， token0， token1
-	p.cli.CallContract(p.ctx, ethereum.CallMsg{
-		From: addr,
-		To:   addr,
-		Data: addr,
-	}, nil)
+	if protocol == SwapProtocolV2 {
+		p.v2Contract.Factory()
+	}
+
 	// 创建pair并保存到graph
 	// 根据token0， token1， 获取其他几个交易所的pair， 也保存到graph
 	return nil

@@ -1,6 +1,7 @@
 package arbitrage
 
 import (
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 )
@@ -20,5 +21,15 @@ func (s SwapProtocol) Factory() common.Address {
 	} else {
 		log.Crit("unknown protocol", "protocol", s)
 		return [20]byte{}
+	}
+}
+func (s SwapProtocol) ABI() *abi.ABI {
+	if s == SwapProtocolV2 {
+		return &ABIV2
+	} else if s == SwapProtocolV3 {
+		return &ABIV3
+	} else {
+		log.Crit("unknown protocol", "protocol", s)
+		return nil
 	}
 }
